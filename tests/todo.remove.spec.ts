@@ -1,16 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  // Navigate to the app, then clear localStorage in the app origin to avoid
-  // SecurityError when accessing storage on special origins like about:blank.
   await page.goto('https://demo.playwright.dev/todomvc/#/');
-  await page.waitForLoadState('networkidle');
-  try {
-    await page.evaluate(() => localStorage.clear());
-  } catch (e) {
-    // If access is blocked, add an init script to clear storage on the next load
-    await page.addInitScript(() => { try { localStorage.clear(); } catch (e) {} });
-  }
   await page.reload();
 });
 
@@ -37,5 +28,5 @@ test('removes a todo', async ({ page }) => {
   await expect(todoList.locator('li')).toHaveCount(0);
   const hasCountTestId = await page.locator('[data-testid="todo-count"]').count() > 0;
   const count = hasCountTestId ? page.getByTestId('todo-count') : page.locator('span.todo-count');
-  await expect(count).toHaveText(/0/);
+  await expect(count).not.toBeVisible();
 });

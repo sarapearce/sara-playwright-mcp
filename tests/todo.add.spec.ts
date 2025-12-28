@@ -1,15 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  // Navigate to the app, then clear localStorage in the app origin to avoid
-  // SecurityError when accessing storage on special origins like about:blank.
   await page.goto('https://demo.playwright.dev/todomvc/#/');
-  await page.waitForLoadState('networkidle');
-  try {
-    await page.evaluate(() => localStorage.clear());
-  } catch (e) {
-    await page.addInitScript(() => { try { localStorage.clear(); } catch (e) {} });
-  }
   await page.reload();
 });
 
